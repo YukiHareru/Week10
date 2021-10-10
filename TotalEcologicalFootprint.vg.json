@@ -1,0 +1,63 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "World Ecological Footprint (2016)",
+  "width": 800,
+  "height": 500,
+  "data": {
+    "url": "https://raw.githubusercontent.com/YukiHareru/Vega-lite/main/js/world.topojson",
+    "format": {"type": "topojson", "feature": "world.geo"}
+  },
+  "projection": {"type": "equalEarth"},
+  "layer":[
+    {
+      "transform": [
+        {"calculate": "'Data is not available in ' + datum.properties.name", "as": "note"}
+      ],
+      "mark": {"type": "geoshape", "fill": "lightgray", "stroke": "white"},
+      "encoding": {
+        "tooltip": {
+          "field": "note"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "lookup": "properties.name",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/YukiHareru/Vega-lite/main/data/countries.csv"
+            },
+            "key": "Country",
+            "fields": ["TotalEcologicalFootprint", "PopulationInmillions"]
+          }
+        },
+ {"calculate": "datum.TotalEcologicalFootprint/datum.PopulationInmillions * 1000", "as": "Total Ecological Footprint per 1 billion population"}
+      ],
+      "mark": {"type": "geoshape", "stroke": "white"},
+      "encoding": {
+        "color": {
+          "field": "Total Ecological Footprint per 1 billion population",
+          "type": "quantitative",
+          "scale": {
+ "type": "threshold",
+ "domain": [5, 140, 330, 500],
+ "range": ["#c5ffc4", "#a6ffa6", "#97ef97", "#88e089", "#79d07b"]
+ }
+
+          
+        },
+        "tooltip": [
+          {"field": "properties.name", "type": "nominal", "title": "Country"},
+          {"field": "TotalEcologicalFootprint", "type": "quantitative"},
+          {"field": "Total Ecological Footprint per 1 billion population", "type": "quantitative", "format": ".5f"}
+        ]
+      }
+    }
+  ],
+  "config": {
+
+ "background": "#F3FAF9"
+  }
+
+}
